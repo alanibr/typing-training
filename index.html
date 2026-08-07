@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Тайминг-игра</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app" id="app" tabindex="0">
+      <h1>Тренажер клавиатуры</h1>
+      <p class="subtitle">Набирай слова до того, как они упадут вниз.</p>
+
+      <section class="hud" aria-label="Статистика">
+        <div class="hud-card">Счёт: <span id="score">0</span></div>
+        <div class="hud-card">Жизни: <span id="lives">3</span></div>
+      </section>
+
+      <section class="track" id="track">
+        <div class="fall-line"></div>
+        <div id="lifeNotice" class="life-notice">-1 жизнь</div>
+      </section>
+
+      <section class="controls">
+        <div class="difficulty-row" role="group" aria-label="Сложность">
+          <button class="difficulty-btn active" data-difficulty="easy">Лёгкий</button>
+          <button class="difficulty-btn" data-difficulty="medium">Средний</button>
+          <button class="difficulty-btn" data-difficulty="hard">Сложный</button>
+        </div>
+        <button id="restartBtn">Начать заново</button>
+        <p id="message" class="message">Появится слово — набери его полностью.</p>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
