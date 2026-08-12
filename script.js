@@ -443,6 +443,14 @@ function startGame() {
     startScreenEl.classList.add('hidden');
   }
 
+  if (playerNameInput) {
+    playerNameInput.closest('.input-row')?.classList.add('hidden');
+  }
+
+  if (leaderboardListEl) {
+    leaderboardListEl.closest('.leaderboard')?.classList.add('hidden');
+  }
+
   score = 0;
   lives = sharedLives;
   isRunning = true;
