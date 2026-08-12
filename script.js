@@ -2,6 +2,7 @@ const scoreEl = document.getElementById('score');
 const livesEl = document.getElementById('lives');
 const restartBtn = document.getElementById('restartBtn');
 const messageEl = document.getElementById('message');
+const textInput = document.getElementById('textInput');
 const appEl = document.getElementById('app');
 const trackEl = document.getElementById('track');
 const lifeNoticeEl = document.getElementById('lifeNotice');
@@ -19,6 +20,12 @@ const difficultySettings = {
 };
 
 const sharedLives = 3;
+
+const [STORAGE_NICK, STORAGE_COLLECTION] = (() => {
+  const parts = window.location.pathname.split('/').filter(Boolean);
+  return [parts[0] || 'your-nick', parts[1] || 'game'];
+})();
+const STORAGE_URL = `https://teens.make-it.kz/api/data/${STORAGE_NICK}/${STORAGE_COLLECTION}`;
 
 let currentDifficulty = 'easy';
 let score = 0;
@@ -78,12 +85,53 @@ function updateHud() {
   livesEl.textContent = lives;
 }
 
+async function saveResult(result) {
+  const payload = {
+    username: 'Игрок',
+    score: result.score,
+    difficulty: result.difficulty,
+    lives: result.lives,
+    status: result.status,
+    finishedAt: result.finishedAt,
+    message: result.message,
+  };
+
+  try {
+    messageEl.textContent = 'Сохраняю результат...';
+    const response = await fetch(STORAGE_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Ошибка сервера: ${response.status}`);
+    }
+
+    const data = await response.json();
+    if (!data.ok) {
+      throw new Error('Сервер вернул неок');
+    }
+
+    messageEl.textContent = 'Результат сохранён на сервере.';
+    return true;
+  } catch (error) {
+    console.error('Сохранение не удалось', error);
+    messageEl.textContent = 'Не удалось сохранить. Результат сохранён локально.';
+    localStorage.setItem('typing-game-last-result', JSON.stringify(payload));
+    return false;
+  }
+}
+
 function applyDifficulty(difficulty) {
   currentDifficulty = difficulty;
   const settings = difficultySettings[difficulty];
   lives = sharedLives;
   updateHud();
   messageEl.textContent = `Сложность: ${settings.label}`;
+  textInput.value = '';
   document.querySelectorAll('.difficulty-btn').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.difficulty === difficulty);
   });
@@ -95,6 +143,45 @@ function renderWord() {
   const before = currentWord.slice(0, typedLength);
   const after = currentWord.slice(typedLength);
   wordEl.innerHTML = `${before.split('').map(ch => `<span class="letter-correct">${ch}</span>`).join('')}${after}`;
+}
+
+function isMobileDevice() {
+  return /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+}
+
+function focusInput() {
+  textInput?.focus();
+}
+
+function handleTextInput(event) {
+  if (!isRunning || !currentWord) return;
+  const value = (event.target.value || '').toLowerCase().replace(/[^а-яё]/gi, '');
+  if (value.length < typedText.length) {
+    typedText = value;
+    renderWord();
+    messageEl.textContent = 'Набирай дальше...';
+    return;
+  }
+
+  const nextChar = value.slice(-1);
+  if (!nextChar) return;
+
+  if (currentWord.startsWith(typedText + nextChar)) {
+    typedText += nextChar;
+    textInput.value = typedText;
+    renderWord();
+    messageEl.textContent = 'Набирай дальше...';
+
+    if (typedText === currentWord) {
+      handleSuccess();
+    }
+    return;
+  }
+
+  textInput.value = '';
+  typedText = '';
+  renderWord();
+  messageEl.textContent = 'Не та буква — попробуй снова.';
 }
 
 function spawnWord() {
@@ -112,9 +199,10 @@ function spawnWord() {
   wordEl.style.left = `${Math.random() * 70 + 15}%`;
   wordEl.style.top = '0px';
   trackEl.appendChild(wordEl);
+  textInput.value = '';
   renderWord();
   messageEl.textContent = 'Набирай слово, пока оно падает.';
-  appEl?.focus();
+  focusInput();
 }
 
 function endGame() {
@@ -124,6 +212,14 @@ function endGame() {
     wordEl = null;
   }
   messageEl.textContent = 'Игра окончена. Нажми «Начать заново». ';
+  saveResult({
+    score,
+    difficulty: currentDifficulty,
+    lives,
+    status: 'finished',
+    finishedAt: new Date().toISOString(),
+    message: 'Игра окончена',
+  });
 }
 
 function handleSuccess() {
@@ -135,6 +231,8 @@ function handleSuccess() {
     wordEl.remove();
     wordEl = null;
   }
+  textInput.value = '';
+  focusInput();
   setTimeout(() => {
     if (isRunning) spawnWord();
   }, 250);
@@ -162,6 +260,8 @@ function handleMiss() {
     wordEl.remove();
     wordEl = null;
   }
+  textInput.value = '';
+  focusInput();
   if (lives <= 0) {
     endGame();
   } else {
@@ -237,8 +337,10 @@ restartBtn.addEventListener('click', () => {
     wordEl.remove();
     wordEl = null;
   }
+  textInput.value = '';
   lastTime = 0;
   spawnWord();
+  focusInput();
   requestAnimationFrame(updateFrame);
 });
 
@@ -250,15 +352,22 @@ document.querySelectorAll('.difficulty-btn').forEach(btn => {
         wordEl.remove();
         wordEl = null;
       }
+      textInput.value = '';
       lastTime = 0;
       spawnWord();
+      focusInput();
     }
   });
 });
 
+textInput?.addEventListener('input', handleTextInput);
 window.addEventListener('keydown', handleInput);
-appEl?.addEventListener('click', () => appEl.focus());
+appEl?.addEventListener('click', focusInput);
+trackEl?.addEventListener('click', focusInput);
 
 applyDifficulty(currentDifficulty);
 spawnWord();
+if (isMobileDevice()) {
+  setTimeout(focusInput, 500);
+}
 requestAnimationFrame(updateFrame);
