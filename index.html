@@ -28,11 +28,24 @@
           <button class="difficulty-btn" data-difficulty="hard">Сложный</button>
         </div>
         <div class="input-row">
+          <label class="input-label" for="playerName">Никнейм</label>
+          <input id="playerName" type="text" maxlength="20" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Игрок" />
+        </div>
+        <div class="input-row">
           <label class="input-label" for="textInput">Поле ввода</label>
           <input id="textInput" type="text" inputmode="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" autofocus placeholder="Набирай слово здесь" />
         </div>
         <button id="restartBtn">Начать заново</button>
         <p id="message" class="message">Появится слово — набери его полностью.</p>
+      </section>
+
+      <section class="leaderboard" aria-labelledby="leaderboardTitle">
+        <div class="leaderboard-header">
+          <h2 id="leaderboardTitle">Лидерборд</h2>
+          <button id="refreshLeaderboardBtn" class="leaderboard-btn" type="button">Обновить</button>
+        </div>
+        <ol id="leaderboardList" class="leaderboard-list"></ol>
+        <p id="leaderboardStatus" class="leaderboard-status">Загрузка таблицы...</p>
       </section>
     </main>
 

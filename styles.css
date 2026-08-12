@@ -207,6 +207,82 @@ h1 {
   min-height: 1.4rem;
 }
 
+.leaderboard {
+  margin-top: 18px;
+  padding: 16px;
+  border-radius: 18px;
+  background: rgba(15, 23, 42, 0.78);
+  border: 1px solid rgba(148, 163, 184, 0.22);
+}
+
+.leaderboard-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.leaderboard-header h2 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.leaderboard-btn {
+  border: 0;
+  border-radius: 999px;
+  padding: 8px 12px;
+  background: rgba(59, 130, 246, 0.15);
+  color: #dbeafe;
+  cursor: pointer;
+}
+
+.leaderboard-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.leaderboard-item {
+  display: grid;
+  grid-template-columns: 40px 1fr auto;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(30, 41, 59, 0.8);
+}
+
+.leaderboard-rank {
+  color: #a5b4fc;
+  font-weight: 700;
+}
+
+.leaderboard-name {
+  color: #e2e8f0;
+  font-weight: 600;
+}
+
+.leaderboard-score {
+  color: #4ade80;
+  font-weight: 800;
+}
+
+.leaderboard-empty {
+  list-style: none;
+  color: #94a3b8;
+  padding: 10px 0;
+}
+
+.leaderboard-status {
+  margin: 10px 0 0;
+  color: #cbd5e1;
+  font-size: 0.88rem;
+}
+
 .input-row {
   display: flex;
   flex-direction: column;
@@ -218,6 +294,7 @@ h1 {
   font-size: 0.95rem;
 }
 
+#playerName,
 #textInput {
   width: 100%;
   min-height: 48px;
