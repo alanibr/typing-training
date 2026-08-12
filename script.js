@@ -4,6 +4,9 @@ const restartBtn = document.getElementById('restartBtn');
 const messageEl = document.getElementById('message');
 const textInput = document.getElementById('textInput');
 const playerNameInput = document.getElementById('playerName');
+const startPlayerNameInput = document.getElementById('startPlayerName');
+const startGameBtn = document.getElementById('startGameBtn');
+const startScreenEl = document.getElementById('startScreen');
 const leaderboardListEl = document.getElementById('leaderboardList');
 const leaderboardStatusEl = document.getElementById('leaderboardStatus');
 const refreshLeaderboardBtn = document.getElementById('refreshLeaderboardBtn');
@@ -93,12 +96,13 @@ function playMissSound() {
 }
 
 function getPlayerName() {
-  const value = playerNameInput?.value?.trim() || localStorage.getItem(PLAYER_NAME_KEY) || 'Игрок';
-  const normalized = value.replace(/\s+/g, ' ').trim() || 'Игрок';
-  if (playerNameInput) {
-    playerNameInput.value = normalized;
-    localStorage.setItem(PLAYER_NAME_KEY, normalized);
-  }
+  const sourceValue = (playerNameInput?.value || startPlayerNameInput?.value || localStorage.getItem(PLAYER_NAME_KEY) || 'Игрок').trim();
+  const normalized = sourceValue.replace(/\s+/g, ' ').trim() || 'Игрок';
+
+  if (playerNameInput) playerNameInput.value = normalized;
+  if (startPlayerNameInput) startPlayerNameInput.value = normalized;
+  localStorage.setItem(PLAYER_NAME_KEY, normalized);
+
   return normalized;
 }
 
@@ -432,7 +436,12 @@ function updateFrame(time) {
   requestAnimationFrame(updateFrame);
 }
 
-restartBtn.addEventListener('click', () => {
+function startGame() {
+  getPlayerName();
+  if (startScreenEl) {
+    startScreenEl.classList.add('hidden');
+  }
+
   score = 0;
   lives = sharedLives;
   isRunning = true;
@@ -446,7 +455,13 @@ restartBtn.addEventListener('click', () => {
   spawnWord();
   focusInput();
   requestAnimationFrame(updateFrame);
+}
+
+restartBtn.addEventListener('click', () => {
+  startGame();
 });
+
+startGameBtn?.addEventListener('click', startGame);
 
 document.querySelectorAll('.difficulty-btn').forEach(btn => {
   btn.addEventListener('click', () => {
