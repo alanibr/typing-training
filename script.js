@@ -6,6 +6,7 @@ const textInput = document.getElementById('textInput');
 const playerNameInput = document.getElementById('playerName');
 const startPlayerNameInput = document.getElementById('startPlayerName');
 const startGameBtn = document.getElementById('startGameBtn');
+const openLeaderboardBtn = document.getElementById('openLeaderboardBtn');
 const startScreenEl = document.getElementById('startScreen');
 const leaderboardListEl = document.getElementById('leaderboardList');
 const leaderboardStatusEl = document.getElementById('leaderboardStatus');
@@ -462,6 +463,13 @@ restartBtn.addEventListener('click', () => {
 });
 
 startGameBtn?.addEventListener('click', startGame);
+openLeaderboardBtn?.addEventListener('click', async () => {
+  getPlayerName();
+  await loadLeaderboard();
+  if (startScreenEl) {
+    startScreenEl.classList.add('hidden');
+  }
+});
 
 document.querySelectorAll('.difficulty-btn').forEach(btn => {
   btn.addEventListener('click', () => {
