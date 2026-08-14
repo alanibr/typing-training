@@ -12,9 +12,10 @@
         <h2>Тренажер клавиатуры</h2>
         <label class="start-label" for="startPlayerName">Введите имя</label>
         <input id="startPlayerName" type="text" maxlength="20" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Игрок" />
+        <p id="startNameError" class="start-error" role="alert" aria-live="polite"></p>
         <div class="start-actions">
           <button id="startGameBtn" type="button">Начать игру</button>
-          <button id="openLeaderboardBtn" class="secondary-btn" type="button">Лидерборд</button>
+          <a class="secondary-btn" href="leaderboard.html">Лидерборд</a>
         </div>
       </div>
     </div>
@@ -51,14 +52,6 @@
         <p id="message" class="message">Появится слово — набери его полностью.</p>
       </section>
 
-      <section class="leaderboard" aria-labelledby="leaderboardTitle">
-        <div class="leaderboard-header">
-          <h2 id="leaderboardTitle">Лидерборд</h2>
-          <button id="refreshLeaderboardBtn" class="leaderboard-btn" type="button">Обновить</button>
-        </div>
-        <ol id="leaderboardList" class="leaderboard-list"></ol>
-        <p id="leaderboardStatus" class="leaderboard-status">Загрузка таблицы...</p>
-      </section>
     </main>
 
     <script src="script.js"></script>

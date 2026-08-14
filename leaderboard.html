@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Лидерборд — Тренажер клавиатуры</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app leaderboard-page">
+      <div class="leaderboard-page-nav">
+        <a class="secondary-btn" href="index.html">← Назад к игре</a>
+      </div>
+      <section class="leaderboard" aria-labelledby="leaderboardTitle">
+        <div class="leaderboard-header">
+          <h1 id="leaderboardTitle">Лидерборд</h1>
+          <button id="refreshLeaderboardBtn" class="leaderboard-btn" type="button">Обновить</button>
+        </div>
+        <ol id="leaderboardList" class="leaderboard-list"></ol>
+        <p id="leaderboardStatus" class="leaderboard-status" role="status">Загрузка таблицы...</p>
+      </section>
+    </main>
+    <script src="leaderboard.js"></script>
+  </body>
+</html>

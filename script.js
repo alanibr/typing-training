@@ -5,12 +5,9 @@ const messageEl = document.getElementById('message');
 const textInput = document.getElementById('textInput');
 const playerNameInput = document.getElementById('playerName');
 const startPlayerNameInput = document.getElementById('startPlayerName');
+const startNameErrorEl = document.getElementById('startNameError');
 const startGameBtn = document.getElementById('startGameBtn');
-const openLeaderboardBtn = document.getElementById('openLeaderboardBtn');
 const startScreenEl = document.getElementById('startScreen');
-const leaderboardListEl = document.getElementById('leaderboardList');
-const leaderboardStatusEl = document.getElementById('leaderboardStatus');
-const refreshLeaderboardBtn = document.getElementById('refreshLeaderboardBtn');
 const appEl = document.getElementById('app');
 const trackEl = document.getElementById('track');
 const lifeNoticeEl = document.getElementById('lifeNotice');
@@ -22,9 +19,9 @@ const wordLists = {
 };
 
 const difficultySettings = {
-  easy: { fallSpeed: 55, label: 'Лёгкий' },
-  medium: { fallSpeed: 75, label: 'Средний' },
-  hard: { fallSpeed: 100, label: 'Сложный' }
+  easy: { fallSpeed: 42, label: 'Лёгкий' },
+  medium: { fallSpeed: 58, label: 'Средний' },
+  hard: { fallSpeed: 78, label: 'Сложный' }
 };
 
 const levelThresholds = {
@@ -35,18 +32,20 @@ const levelThresholds = {
 
 const sharedLives = 3;
 const PLAYER_NAME_KEY = 'typing-game-player-name';
-const MAX_LEADERBOARD_ITEMS = 10;
 
 const [STORAGE_NICK, STORAGE_COLLECTION] = (() => {
   const parts = window.location.pathname.split('/').filter(Boolean);
-  return [parts[0] || 'your-nick', parts[1] || 'game'];
+  if (window.location.protocol === 'file:' || parts.length < 2) {
+    return ['alanibr', 'typing-training'];
+  }
+  return [parts[0], parts[1]];
 })();
-const STORAGE_URL = `https://teens.make-it.kz/api/data/${STORAGE_NICK}/${STORAGE_COLLECTION}`;
+const STORAGE_URL = `https://teens.make-it.kz/api/data/${STORAGE_NICK}/${STORAGE_COLLECTION}-v3`;
 
 let currentDifficulty = 'easy';
 let score = 0;
 let lives = sharedLives;
-let isRunning = true;
+let isRunning = false;
 let currentWord = '';
 let typedText = '';
 let wordEl = null;
@@ -97,8 +96,13 @@ function playMissSound() {
 }
 
 function getPlayerName() {
-  const sourceValue = (playerNameInput?.value || startPlayerNameInput?.value || localStorage.getItem(PLAYER_NAME_KEY) || 'Игрок').trim();
-  const normalized = sourceValue.replace(/\s+/g, ' ').trim() || 'Игрок';
+  const startScreenVisible = startScreenEl && !startScreenEl.classList.contains('hidden');
+  const sourceValue = startScreenVisible
+    ? startPlayerNameInput?.value
+    : playerNameInput?.value || localStorage.getItem(PLAYER_NAME_KEY);
+  const normalized = (sourceValue || '').replace(/\s+/g, ' ').trim();
+
+  if (!normalized) return '';
 
   if (playerNameInput) playerNameInput.value = normalized;
   if (startPlayerNameInput) startPlayerNameInput.value = normalized;
@@ -110,61 +114,6 @@ function getPlayerName() {
 function updateHud() {
   scoreEl.textContent = score;
   livesEl.textContent = lives;
-}
-
-async function loadLeaderboard() {
-  if (!leaderboardListEl || !leaderboardStatusEl) return;
-
-  leaderboardStatusEl.textContent = 'Загрузка таблицы...';
-
-  try {
-    const response = await fetch(STORAGE_URL, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(`Ошибка сервера: ${response.status}`);
-    }
-
-    const data = await response.json();
-    const items = Array.isArray(data?.items) ? data.items : [];
-
-    const sortedItems = [...items]
-      .map(item => ({
-        username: item.username || 'Игрок',
-        score: Number(item.score) || 0,
-        difficulty: item.difficulty || 'easy',
-        lives: Number(item.lives) || 0,
-        finishedAt: item.finishedAt || new Date().toISOString(),
-      }))
-      .sort((a, b) => b.score - a.score || b.lives - a.lives)
-      .slice(0, MAX_LEADERBOARD_ITEMS);
-
-    if (!sortedItems.length) {
-      leaderboardListEl.innerHTML = '<li class="leaderboard-empty">Пока нет результатов.</li>';
-      leaderboardStatusEl.textContent = 'Пока нет результатов';
-      return;
-    }
-
-    leaderboardListEl.innerHTML = sortedItems
-      .map((item, index) => `
-        <li class="leaderboard-item">
-          <span class="leaderboard-rank">#${index + 1}</span>
-          <span class="leaderboard-name">${item.username}</span>
-          <span class="leaderboard-score">${item.score}</span>
-        </li>
-      `)
-      .join('');
-
-    leaderboardStatusEl.textContent = 'Топ 10 результатов';
-  } catch (error) {
-    console.error('Загрузка лидерборда не удалась', error);
-    leaderboardListEl.innerHTML = '<li class="leaderboard-empty">Список недоступен.</li>';
-    leaderboardStatusEl.textContent = 'Не удалось обновить таблицу';
-  }
 }
 
 async function saveResult(result) {
@@ -198,7 +147,6 @@ async function saveResult(result) {
     }
 
     messageEl.textContent = 'Результат сохранён на сервере.';
-      await loadLeaderboard();
   } catch (error) {
     console.error('Сохранение не удалось', error);
     messageEl.textContent = 'Не удалось сохранить. Результат сохранён локально.';
@@ -438,17 +386,19 @@ function updateFrame(time) {
 }
 
 function startGame() {
-  getPlayerName();
+  const playerName = getPlayerName();
+  if (!playerName) {
+    if (startNameErrorEl) startNameErrorEl.textContent = 'Введите имя, чтобы начать игру.';
+    startPlayerNameInput?.focus();
+    return;
+  }
+  if (startNameErrorEl) startNameErrorEl.textContent = '';
   if (startScreenEl) {
     startScreenEl.classList.add('hidden');
   }
 
   if (playerNameInput) {
     playerNameInput.closest('.input-row')?.classList.add('hidden');
-  }
-
-  if (leaderboardListEl) {
-    leaderboardListEl.closest('.leaderboard')?.classList.add('hidden');
   }
 
   score = 0;
@@ -471,12 +421,11 @@ restartBtn.addEventListener('click', () => {
 });
 
 startGameBtn?.addEventListener('click', startGame);
-openLeaderboardBtn?.addEventListener('click', async () => {
-  getPlayerName();
-  await loadLeaderboard();
-  if (startScreenEl) {
-    startScreenEl.classList.add('hidden');
-  }
+startPlayerNameInput?.addEventListener('input', () => {
+  if (startNameErrorEl) startNameErrorEl.textContent = '';
+});
+startPlayerNameInput?.addEventListener('keydown', event => {
+  if (event.key === 'Enter') startGame();
 });
 
 document.querySelectorAll('.difficulty-btn').forEach(btn => {
@@ -499,20 +448,14 @@ textInput?.addEventListener('input', handleTextInput);
 playerNameInput?.addEventListener('input', () => {
   localStorage.setItem(PLAYER_NAME_KEY, getPlayerName());
 });
-refreshLeaderboardBtn?.addEventListener('click', loadLeaderboard);
 window.addEventListener('keydown', handleInput);
 appEl?.addEventListener('click', focusInput);
 trackEl?.addEventListener('click', focusInput);
 
 if (playerNameInput) {
-  const savedName = localStorage.getItem(PLAYER_NAME_KEY) || 'Игрок';
+  const savedName = localStorage.getItem(PLAYER_NAME_KEY) || '';
   playerNameInput.value = savedName;
+  if (startPlayerNameInput) startPlayerNameInput.value = savedName;
 }
 
 applyDifficulty(currentDifficulty);
-spawnWord();
-loadLeaderboard();
-if (isMobileDevice()) {
-  setTimeout(focusInput, 500);
-}
-requestAnimationFrame(updateFrame);
