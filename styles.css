@@ -170,15 +170,16 @@ h1 {
 }
 
 .difficulty-row {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(76px, 1fr)) minmax(112px, auto);
+  gap: 6px;
 }
 
 .difficulty-btn {
   border: 1px solid rgba(148, 163, 184, 0.25);
   border-radius: 999px;
-  padding: 8px 12px;
+  min-height: 34px;
+  padding: 6px 9px;
   background: rgba(30, 41, 59, 0.9);
   color: #e2e8f0;
   cursor: pointer;
@@ -191,13 +192,15 @@ h1 {
 }
 
 #restartBtn {
-  width: fit-content;
+  width: 100%;
   border: 0;
   border-radius: 999px;
-  padding: 10px 16px;
+  padding: 6px 10px;
   background: #22c55e;
   color: #052e16;
   font-weight: 700;
+  font-size: 0.78rem;
+  white-space: nowrap;
   cursor: pointer;
 }
 
@@ -481,5 +484,590 @@ h1 {
   #textInput {
     min-height: 44px;
     font-size: 0.95rem;
+  }
+}
+
+/* Hacker terminal theme */
+:root {
+  color-scheme: dark;
+  font-family: "JetBrains Mono", "Cascadia Code", Consolas, monospace;
+  background: #020403;
+  color: #d8ffe5;
+}
+
+body {
+  position: relative;
+  background:
+    linear-gradient(rgba(0, 255, 102, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 255, 102, 0.055) 1px, transparent 1px),
+    radial-gradient(circle at 50% -20%, #12331c 0, #07100a 46%, #020403 100%);
+  background-size: 32px 32px, 32px 32px, auto;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  z-index: 100;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.18;
+  background: repeating-linear-gradient(0deg, transparent 0 3px, rgba(0, 0, 0, 0.55) 4px);
+}
+
+.app {
+  border: 1px solid #00ff66;
+  border-radius: 3px;
+  background: rgba(3, 10, 6, 0.96);
+  box-shadow: 12px 12px 0 rgba(0, 255, 102, 0.12), 0 0 50px rgba(0, 255, 102, 0.1);
+}
+
+.app::before {
+  content: "root@klavishi:~/training $ ./start";
+  display: block;
+  margin: -8px 0 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(0, 255, 102, 0.35);
+  color: #00ff66;
+  font-size: 0.72rem;
+}
+
+h1,
+.start-card h2,
+.leaderboard-header h1,
+.leaderboard-header h2 {
+  color: #effff3;
+  font-family: "JetBrains Mono", "Cascadia Code", Consolas, monospace;
+  text-transform: uppercase;
+  text-shadow: 2px 0 rgba(255, 59, 129, 0.38), -2px 0 rgba(0, 225, 255, 0.28);
+}
+
+h1::before,
+.start-card h2::before {
+  content: "> ";
+  color: #00ff66;
+  text-shadow: 0 0 12px rgba(0, 255, 102, 0.7);
+}
+
+.subtitle,
+.message,
+.input-label,
+.start-label,
+.leaderboard-status {
+  color: #8dab96;
+}
+
+.hud-card {
+  border: 1px solid #246c3a;
+  border-radius: 2px;
+  background: #06100a;
+  color: #d8ffe5;
+  box-shadow: inset 0 0 18px rgba(0, 255, 102, 0.035);
+}
+
+.hud-card span {
+  color: #00ff66;
+  text-shadow: 0 0 10px rgba(0, 255, 102, 0.65);
+}
+
+.track {
+  border: 1px solid #00b849;
+  border-radius: 2px;
+  background:
+    linear-gradient(rgba(0, 255, 102, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 255, 102, 0.04) 1px, transparent 1px),
+    linear-gradient(180deg, #06110a, #020604);
+  background-size: 24px 24px, 24px 24px, auto;
+  box-shadow: inset 0 0 45px rgba(0, 0, 0, 0.75), 0 0 24px rgba(0, 255, 102, 0.08);
+}
+
+.track::before {
+  content: "LIVE_FEED // INPUT DETECTED";
+  position: absolute;
+  z-index: 2;
+  top: 10px;
+  left: 12px;
+  color: rgba(0, 255, 102, 0.6);
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  pointer-events: none;
+}
+
+.fall-line {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #ff3b81, transparent);
+  box-shadow: 0 0 14px #ff3b81;
+}
+
+.falling-word {
+  border: 1px solid #00ff66;
+  border-radius: 2px;
+  background: #07160c;
+  color: #d8ffe5;
+  box-shadow: 0 0 20px rgba(0, 255, 102, 0.25), 4px 4px 0 rgba(0, 255, 102, 0.12);
+  font-family: "JetBrains Mono", "Cascadia Code", Consolas, monospace;
+  text-shadow: 0 0 8px rgba(0, 255, 102, 0.4);
+}
+
+.letter-correct {
+  color: #00ff66;
+  text-shadow: 0 0 10px #00ff66;
+}
+
+.life-notice {
+  border: 1px solid #ff3b81;
+  border-radius: 2px;
+  background: #220713;
+  color: #ff8eb6;
+  box-shadow: 0 0 20px rgba(255, 59, 129, 0.25);
+}
+
+.difficulty-btn,
+#restartBtn,
+#startGameBtn,
+.secondary-btn,
+.leaderboard-btn {
+  border: 1px solid #246c3a;
+  border-radius: 2px;
+  background: #06100a;
+  color: #9ec8a9;
+  font-family: inherit;
+  text-transform: uppercase;
+  transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+}
+
+.difficulty-btn:hover,
+.secondary-btn:hover,
+.leaderboard-btn:hover {
+  border-color: #00ff66;
+  color: #00ff66;
+  box-shadow: 0 0 14px rgba(0, 255, 102, 0.12);
+}
+
+.difficulty-btn.active,
+#restartBtn,
+#startGameBtn {
+  border-color: #00ff66;
+  background: #00ff66;
+  color: #021006;
+  box-shadow: 4px 4px 0 rgba(0, 255, 102, 0.18), 0 0 18px rgba(0, 255, 102, 0.12);
+}
+
+#restartBtn::before,
+#startGameBtn::before {
+  content: "./";
+}
+
+.start-screen {
+  background:
+    linear-gradient(rgba(0, 255, 102, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 255, 102, 0.04) 1px, transparent 1px),
+    rgba(1, 5, 3, 0.92);
+  background-size: 28px 28px;
+  backdrop-filter: blur(8px);
+}
+
+.start-card {
+  border: 1px solid #00ff66;
+  border-radius: 3px;
+  background: rgba(3, 10, 6, 0.98);
+  box-shadow: 10px 10px 0 rgba(0, 255, 102, 0.12), 0 0 55px rgba(0, 255, 102, 0.12);
+}
+
+.start-card::before {
+  content: "AUTHORIZATION_REQUIRED";
+  color: #00ff66;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+}
+
+#startPlayerName,
+#playerName,
+#textInput {
+  border: 1px solid #246c3a;
+  border-radius: 2px;
+  background: #020604;
+  color: #d8ffe5;
+  font-family: inherit;
+  caret-color: #00ff66;
+}
+
+#startPlayerName:focus,
+#playerName:focus,
+#textInput:focus {
+  border-color: #00ff66;
+  box-shadow: 0 0 0 2px rgba(0, 255, 102, 0.12), 0 0 20px rgba(0, 255, 102, 0.09);
+}
+
+#startPlayerName::placeholder,
+#playerName::placeholder,
+#textInput::placeholder {
+  color: #3f6f4b;
+}
+
+.start-error { color: #ff719f; }
+.leaderboard { border: 1px solid #246c3a; border-radius: 2px; background: #041008; }
+.leaderboard-item { border: 1px solid rgba(0, 255, 102, 0.16); border-radius: 2px; background: #06100a; }
+.leaderboard-rank,
+.leaderboard-score { color: #00ff66; }
+.leaderboard-name { color: #d8ffe5; }
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible {
+  outline: 2px solid #d9ff3f;
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    transition: none !important;
+  }
+}
+
+/* Fluid height based on the visible viewport */
+html,
+body {
+  height: 100%;
+  min-height: 100%;
+  overflow: hidden;
+}
+
+.app {
+  height: calc(100dvh - clamp(24px, 4vw, 48px));
+  max-height: calc(100dvh - clamp(24px, 4vw, 48px));
+}
+
+.track {
+  flex: 1 1 0;
+  min-height: 180px;
+  height: auto;
+}
+
+/* Fit the whole game into small viewports without page scrolling */
+@media (max-width: 720px) {
+  html,
+  body {
+    height: 100%;
+    min-height: 100%;
+    overflow: hidden;
+  }
+
+  body {
+    padding: 8px;
+  }
+
+  .app {
+    width: min(100%, 560px);
+    height: calc(100dvh - 16px);
+    max-height: calc(100dvh - 16px);
+    padding: 14px;
+  }
+
+  .app::before {
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+  }
+
+  h1 {
+    margin-bottom: 3px;
+    font-size: clamp(1.2rem, 5vw, 1.5rem);
+  }
+
+  .subtitle {
+    margin-bottom: 10px;
+    font-size: 0.78rem;
+  }
+
+  .hud {
+    gap: 7px;
+    margin-bottom: 9px;
+  }
+
+  .hud-card {
+    min-width: 0;
+    padding: 8px 10px;
+    font-size: 0.82rem;
+  }
+
+  .track {
+    flex: 1 1 0;
+    min-height: 180px;
+    height: auto;
+  }
+
+  .controls {
+    flex: 0 0 auto;
+    gap: 6px;
+    margin-top: 9px;
+  }
+
+  .difficulty-row {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) minmax(94px, 1.25fr);
+    gap: 5px;
+  }
+
+  .difficulty-btn,
+  #restartBtn {
+    width: auto;
+    min-height: 34px;
+    padding: 6px 8px;
+    font-size: clamp(0.56rem, 2.1vw, 0.72rem);
+    white-space: nowrap;
+  }
+
+  .input-row {
+    gap: 3px;
+  }
+
+  .input-label {
+    font-size: 0.7rem;
+  }
+
+  #playerName,
+  #textInput {
+    min-height: 38px;
+    padding: 7px 10px;
+    font-size: 0.82rem;
+  }
+
+  .message {
+    min-height: 1rem;
+    font-size: 0.7rem;
+    line-height: 1.25;
+  }
+}
+
+@media (max-width: 480px) {
+  .app {
+    padding: 11px;
+  }
+
+  .difficulty-row {
+    flex-direction: initial;
+  }
+}
+
+@media (max-height: 680px) and (max-width: 720px) {
+  .subtitle,
+  .input-label,
+  .message {
+    display: none;
+  }
+
+  .app::before {
+    margin-bottom: 6px;
+    padding-bottom: 5px;
+    font-size: 0.58rem;
+  }
+
+  .hud {
+    margin-bottom: 6px;
+  }
+
+  .controls {
+    margin-top: 6px;
+  }
+
+  .track {
+    min-height: 150px;
+  }
+}
+
+/* Immersive full-screen game layout */
+body {
+  display: block;
+  padding: 0;
+  background-color: #020403;
+}
+
+.app {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100dvh;
+  max-width: none;
+  max-height: none;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: rgba(2, 6, 4, 0.82);
+  box-shadow: none;
+}
+
+.app::before,
+.app > h1,
+.app > .subtitle {
+  display: none;
+}
+
+.hud {
+  position: absolute;
+  z-index: 10;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  height: 46px;
+  margin: 0;
+  padding: 7px 16px;
+  border-bottom: 1px solid rgba(0, 255, 102, 0.16);
+  background: rgba(1, 5, 3, 0.9);
+}
+
+.hud-card {
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  color: #55715e;
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.hud-card:last-child { text-align: right; }
+.hud-card span {
+  display: block;
+  margin-top: 1px;
+  color: #d8ffe5;
+  font-size: 0.94rem;
+  letter-spacing: 0.04em;
+}
+
+.hud-card:last-child span { color: #ff3b65; }
+
+.track {
+  position: absolute;
+  inset: 46px 0 48px;
+  width: auto;
+  height: auto;
+  min-height: 0;
+  border: 0;
+  border-radius: 0;
+  box-shadow: inset 0 -80px 80px rgba(104, 160, 26, 0.08);
+}
+
+.track::before {
+  top: 9px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.52rem;
+  opacity: 0.45;
+}
+
+.fall-line {
+  bottom: 28px;
+  opacity: 0.5;
+}
+
+.falling-word {
+  padding: 8px 12px;
+  font-size: clamp(0.9rem, 2vw, 1.1rem);
+}
+
+.controls {
+  position: absolute;
+  z-index: 12;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: grid;
+  grid-template-columns: 1fr minmax(180px, 280px) 1fr;
+  align-items: center;
+  gap: 12px;
+  height: 48px;
+  margin: 0;
+  padding: 5px 12px;
+  border-top: 1px solid rgba(0, 255, 102, 0.16);
+  background: rgba(1, 5, 3, 0.94);
+}
+
+.controls .input-row:first-of-type,
+.controls .input-label,
+.controls .message {
+  display: none;
+}
+
+.difficulty-row {
+  grid-column: 1;
+  grid-row: 1;
+  grid-template-columns: repeat(3, minmax(54px, 72px)) minmax(92px, 112px);
+  justify-content: start;
+  gap: 4px;
+}
+
+.difficulty-btn,
+#restartBtn {
+  min-height: 28px;
+  padding: 4px 6px;
+  font-size: 0.58rem;
+}
+
+.controls .input-row:has(#textInput) {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+#textInput {
+  width: 100%;
+  min-height: 30px;
+  padding: 4px 10px;
+  border-color: rgba(0, 255, 102, 0.28);
+  font-size: 0.72rem;
+  text-align: center;
+}
+
+@media (max-width: 720px) {
+  .app {
+    width: 100%;
+    height: 100dvh;
+    max-height: none;
+    padding: 0;
+  }
+
+  .track {
+    inset: 42px 0 84px;
+    min-height: 0;
+  }
+
+  .hud {
+    height: 42px;
+    padding: 5px 9px;
+  }
+
+  .controls {
+    grid-template-columns: 1fr;
+    grid-template-rows: 34px 34px;
+    gap: 3px;
+    height: 84px;
+    padding: 5px 8px;
+  }
+
+  .difficulty-row {
+    grid-column: 1;
+    grid-row: 1;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) minmax(90px, 1.3fr);
+    width: 100%;
+  }
+
+  .controls .input-row:has(#textInput) {
+    grid-column: 1;
+    grid-row: 2;
+    width: min(100%, 360px);
+    justify-self: center;
+  }
+}
+
+@media (max-width: 390px) {
+  .difficulty-btn,
+  #restartBtn {
+    padding-inline: 3px;
+    font-size: 0.5rem;
   }
 }

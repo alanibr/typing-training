@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Игровой тренажёр клавиатуры для школьников — печатай быстрее, пока слова не упали." />
+    <title>Клавиши — игровой тренажёр печати</title>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700;800&family=Unbounded:wght@700;800&display=swap');
+
+      :root {
+        --ink: #191a2b;
+        --paper: #fffdf7;
+        --purple: #7447ed;
+        --purple-dark: #532ac0;
+        --lime: #c9ff63;
+        --pink: #ff8db8;
+        --yellow: #ffd95c;
+        --line: rgba(25, 26, 43, 0.12);
+        --shadow: 8px 8px 0 var(--ink);
+      }
+
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      body {
+        margin: 0;
+        color: var(--ink);
+        background:
+          linear-gradient(var(--line) 1px, transparent 1px),
+          linear-gradient(90deg, var(--line) 1px, transparent 1px),
+          var(--paper);
+        background-size: 32px 32px;
+        font-family: Manrope, system-ui, sans-serif;
+      }
+
+      a { color: inherit; }
+      .wrap { width: min(1160px, calc(100% - 40px)); margin-inline: auto; }
+
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-block: 24px;
+      }
+
+      .logo {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        font-family: Unbounded, sans-serif;
+        font-size: 18px;
+        text-decoration: none;
+      }
+
+      .logo-mark {
+        display: grid;
+        place-items: center;
+        width: 38px;
+        height: 38px;
+        border: 2px solid var(--ink);
+        border-radius: 10px;
+        background: var(--lime);
+        box-shadow: 3px 3px 0 var(--ink);
+        font-family: Manrope, sans-serif;
+        font-weight: 800;
+      }
+
+      .mini-link { font-size: 14px; font-weight: 800; text-underline-offset: 5px; }
+
+      .hero {
+        min-height: calc(100vh - 86px);
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        align-items: center;
+        gap: clamp(36px, 7vw, 92px);
+        padding: 56px 0 100px;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        margin: 0 0 24px;
+        padding: 8px 13px;
+        border: 2px solid var(--ink);
+        border-radius: 999px;
+        background: white;
+        font-size: 13px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        transform: rotate(-1deg);
+      }
+
+      .eyebrow::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: var(--purple); }
+      h1, h2 { font-family: Unbounded, sans-serif; }
+      h1 {
+        max-width: 760px;
+        margin: 0;
+        font-size: clamp(44px, 7vw, 88px);
+        line-height: 0.98;
+        letter-spacing: -0.06em;
+        text-transform: uppercase;
+      }
+
+      h1 span {
+        position: relative;
+        color: var(--purple);
+        white-space: nowrap;
+      }
+
+      h1 span::after {
+        content: "";
+        position: absolute;
+        z-index: -1;
+        left: -2%;
+        right: -3%;
+        bottom: 3%;
+        height: 23%;
+        background: var(--lime);
+        transform: rotate(-2deg);
+      }
+
+      .hero-copy { max-width: 610px; margin: 28px 0 32px; font-size: clamp(17px, 2vw, 21px); line-height: 1.55; }
+
+      .cta {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 14px;
+        min-height: 64px;
+        padding: 16px 28px;
+        border: 3px solid var(--ink);
+        border-radius: 16px;
+        background: var(--lime);
+        box-shadow: 6px 6px 0 var(--ink);
+        font-size: 18px;
+        font-weight: 800;
+        text-decoration: none;
+        text-transform: uppercase;
+        transition: transform .15s ease, box-shadow .15s ease;
+      }
+
+      .cta::after { content: "→"; font-size: 26px; line-height: 1; }
+      .cta:hover { transform: translate(3px, 3px); box-shadow: 3px 3px 0 var(--ink); }
+      .cta:focus-visible { outline: 4px solid var(--pink); outline-offset: 4px; }
+
+      .game-card {
+        position: relative;
+        min-height: 500px;
+        overflow: hidden;
+        border: 3px solid var(--ink);
+        border-radius: 28px;
+        background: var(--purple);
+        box-shadow: var(--shadow);
+        transform: rotate(2deg);
+      }
+
+      .game-card::before {
+        content: "слово падает!";
+        position: absolute;
+        top: 28px;
+        right: 22px;
+        padding: 9px 13px;
+        border: 2px solid var(--ink);
+        border-radius: 10px;
+        background: var(--yellow);
+        font-weight: 800;
+        transform: rotate(4deg);
+      }
+
+      .falling-word {
+        position: absolute;
+        top: 105px;
+        left: 50%;
+        padding: 13px 20px;
+        border: 3px solid var(--ink);
+        border-radius: 14px;
+        background: var(--pink);
+        box-shadow: 4px 4px 0 var(--ink);
+        font-size: 24px;
+        font-weight: 800;
+        transform: translateX(-50%) rotate(-3deg);
+        animation: float 2.6s ease-in-out infinite;
+      }
+
+      .speed-line { position: absolute; left: 12%; right: 12%; top: 235px; border-top: 3px dashed rgba(255,255,255,.65); }
+      .keyboard { position: absolute; left: 7%; right: 7%; bottom: 46px; display: grid; gap: 9px; padding: 20px; border: 3px solid var(--ink); border-radius: 22px; background: #f4f0ff; box-shadow: 7px 7px 0 rgba(25,26,43,.9); transform: rotate(-3deg); }
+      .key-row { display: flex; justify-content: center; gap: 7px; }
+      .key { width: 34px; height: 34px; display: grid; place-items: center; border: 2px solid var(--ink); border-radius: 7px; background: white; box-shadow: 2px 3px 0 var(--ink); font-size: 12px; font-weight: 800; }
+      .key.hot { background: var(--lime); transform: translateY(2px); box-shadow: 1px 1px 0 var(--ink); }
+      .space { width: 135px; }
+      @keyframes float { 50% { transform: translateX(-50%) translateY(18px) rotate(2deg); } }
+
+      .section { padding: 108px 0; }
+      .section-heading { display: flex; align-items: end; justify-content: space-between; gap: 32px; margin-bottom: 50px; }
+      .section h2 { max-width: 780px; margin: 0; font-size: clamp(36px, 5vw, 64px); line-height: 1.05; letter-spacing: -0.045em; text-transform: uppercase; }
+      .section-number { flex: none; font: 800 18px Unbounded, sans-serif; }
+
+      .moments { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; }
+      .moment {
+        position: relative;
+        min-height: 245px;
+        padding: 30px;
+        overflow: hidden;
+        border: 3px solid var(--ink);
+        border-radius: 22px;
+        background: white;
+        box-shadow: 6px 6px 0 var(--ink);
+      }
+
+      .moment:nth-child(2) { background: var(--yellow); }
+      .moment:nth-child(3) { background: var(--pink); }
+      .moment:nth-child(4) { background: var(--lime); }
+      .moment-tag { display: inline-block; margin-bottom: 50px; padding: 6px 10px; border: 2px solid var(--ink); border-radius: 8px; background: var(--paper); font-size: 12px; font-weight: 800; text-transform: uppercase; }
+      .moment p { max-width: 430px; margin: 0; font-size: clamp(20px, 2.5vw, 29px); font-weight: 800; line-height: 1.25; }
+      .moment em { color: var(--purple-dark); font-style: normal; }
+
+      .safe { background: var(--ink); color: white; }
+      .safe .section-number { color: var(--lime); }
+      .answers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+      .answer { padding: 28px; border: 2px solid rgba(255,255,255,.45); border-radius: 22px; background: #27283d; }
+      .answer-icon { width: 52px; height: 52px; display: grid; place-items: center; margin-bottom: 50px; border: 2px solid var(--ink); border-radius: 13px; background: var(--lime); color: var(--ink); font-size: 25px; font-weight: 800; transform: rotate(-4deg); }
+      .answer h3 { margin: 0 0 12px; font-size: 22px; }
+      .answer p { margin: 0; color: #c9c9d7; line-height: 1.6; }
+
+      .final { padding: 110px 0; text-align: center; }
+      .final-card { padding: clamp(44px, 8vw, 90px) 24px; border: 3px solid var(--ink); border-radius: 30px; background: var(--purple); color: white; box-shadow: var(--shadow); }
+      .final h2 { max-width: 850px; margin: 0 auto 22px; font-size: clamp(36px, 6vw, 70px); line-height: 1.05; letter-spacing: -0.05em; text-transform: uppercase; }
+      .final p { margin: 0 auto 34px; font-size: 19px; }
+      footer { padding: 0 0 34px; font-size: 13px; text-align: center; }
+
+      @media (max-width: 820px) {
+        .hero { grid-template-columns: 1fr; padding-top: 36px; }
+        .game-card { min-height: 420px; width: min(100%, 520px); }
+        .answers { grid-template-columns: 1fr; }
+        .answer { display: grid; grid-template-columns: auto 1fr; column-gap: 20px; }
+        .answer-icon { grid-row: span 2; margin: 0; }
+      }
+
+      @media (max-width: 580px) {
+        .wrap { width: min(100% - 24px, 1160px); }
+        .mini-link { display: none; }
+        h1 { font-size: clamp(39px, 13vw, 58px); }
+        .hero { min-height: auto; padding-bottom: 72px; }
+        .game-card { min-height: 360px; }
+        .game-card::before { font-size: 12px; }
+        .keyboard { left: 4%; right: 4%; bottom: 34px; padding: 14px 8px; gap: 7px; }
+        .key-row { gap: 4px; }
+        .key { width: 26px; height: 27px; font-size: 9px; box-shadow: 1px 2px 0 var(--ink); }
+        .space { width: 100px; }
+        .section { padding: 76px 0; }
+        .section-heading { align-items: start; margin-bottom: 32px; }
+        .moments { grid-template-columns: 1fr; }
+        .moment { min-height: 220px; padding: 24px; }
+        .moment-tag { margin-bottom: 40px; }
+        .answer { display: block; }
+        .answer-icon { margin-bottom: 26px; }
+        .final { padding: 76px 0; }
+        .cta { width: 100%; }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html { scroll-behavior: auto; }
+        .falling-word { animation: none; }
+        .cta { transition: none; }
+      }
+
+      /* Hacker terminal theme */
+      :root {
+        --ink: #050806;
+        --paper: #07100a;
+        --purple: #00ff66;
+        --purple-dark: #00c94f;
+        --lime: #00ff66;
+        --pink: #ff3b81;
+        --yellow: #d9ff3f;
+        --line: rgba(0, 255, 102, 0.09);
+        --shadow: 7px 7px 0 #00ff66;
+      }
+
+      body {
+        color: #d8ffe5;
+        background:
+          linear-gradient(rgba(0, 255, 102, .055) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(0, 255, 102, .055) 1px, transparent 1px),
+          radial-gradient(circle at 50% -20%, #12331c 0, #07100a 45%, #020403 100%);
+        background-size: 32px 32px, 32px 32px, auto;
+        font-family: "JetBrains Mono", monospace;
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        z-index: 20;
+        inset: 0;
+        pointer-events: none;
+        opacity: .2;
+        background: repeating-linear-gradient(0deg, transparent 0 3px, rgba(0,0,0,.5) 4px);
+      }
+
+      .logo { color: var(--lime); text-transform: uppercase; }
+      .logo::after { content: "_"; animation: blink 1s steps(1) infinite; }
+      .logo-mark { border-color: var(--lime); border-radius: 2px; background: transparent; color: var(--lime); box-shadow: 3px 3px 0 rgba(0,255,102,.28); }
+      .mini-link { color: var(--lime); }
+
+      .eyebrow {
+        border: 1px solid var(--lime);
+        border-radius: 2px;
+        background: rgba(0,255,102,.08);
+        color: var(--lime);
+        transform: none;
+        box-shadow: 0 0 18px rgba(0,255,102,.1);
+      }
+      .eyebrow::before { border-radius: 0; box-shadow: 0 0 10px var(--lime); }
+
+      h1, h2 { font-family: "Unbounded", sans-serif; }
+      h1 { text-shadow: 3px 0 0 rgba(255,59,129,.45), -3px 0 0 rgba(0,225,255,.35); }
+      h1 span { color: var(--lime); text-shadow: 0 0 28px rgba(0,255,102,.4); }
+      h1 span::after { height: 5%; background: var(--lime); box-shadow: 0 0 15px var(--lime); }
+      .hero-copy { color: #9bbba5; }
+      .hero-copy::before { content: "> "; color: var(--lime); font-weight: 800; }
+
+      .cta {
+        border: 1px solid var(--lime);
+        border-radius: 2px;
+        background: var(--lime);
+        color: #021006;
+        box-shadow: 6px 6px 0 rgba(0,255,102,.22), 0 0 26px rgba(0,255,102,.18);
+        font-family: "JetBrains Mono", monospace;
+      }
+      .cta::before { content: "./"; }
+      .cta:hover { box-shadow: 2px 2px 0 rgba(0,255,102,.25), 0 0 32px rgba(0,255,102,.35); }
+
+      .game-card {
+        border: 1px solid var(--lime);
+        border-radius: 3px;
+        background: linear-gradient(180deg, rgba(0,255,102,.08), rgba(0,0,0,.82));
+        box-shadow: 12px 12px 0 rgba(0,255,102,.12), 0 0 50px rgba(0,255,102,.12);
+        transform: none;
+      }
+      .game-card::after {
+        content: "root@klavishi:~/training  [LIVE]";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        padding: 11px 15px;
+        border-bottom: 1px solid rgba(0,255,102,.45);
+        background: #08150c;
+        color: var(--lime);
+        font-size: 11px;
+      }
+      .game-card::before { top: 62px; border: 1px solid var(--yellow); border-radius: 2px; background: transparent; color: var(--yellow); transform: none; }
+      .falling-word { top: 128px; border: 1px solid var(--lime); border-radius: 2px; background: #07160c; color: var(--lime); box-shadow: 0 0 24px rgba(0,255,102,.25); }
+      .speed-line { border-color: rgba(0,255,102,.5); }
+      .keyboard { border: 1px solid var(--lime); border-radius: 2px; background: #07100a; box-shadow: 8px 8px 0 rgba(0,255,102,.12); transform: none; }
+      .key { border: 1px solid #1d6837; border-radius: 2px; background: #091b10; color: #8dcf9e; box-shadow: 1px 2px 0 #174728; }
+      .key.hot { background: var(--lime); color: #021006; box-shadow: 0 0 12px var(--lime); }
+
+      .section-heading { border-bottom: 1px solid rgba(0,255,102,.35); padding-bottom: 22px; }
+      .section-number { color: var(--lime); font-family: "JetBrains Mono", monospace; }
+      .section-number::before { content: "SECTOR "; color: #66866f; }
+      .moment {
+        border: 1px solid #246c3a;
+        border-radius: 2px;
+        background: rgba(5,14,8,.94) !important;
+        box-shadow: 6px 6px 0 rgba(0,255,102,.09);
+      }
+      .moment::after { content: "ACCESS_LOG"; position: absolute; right: 18px; bottom: 15px; color: rgba(0,255,102,.28); font-size: 11px; }
+      .moment-tag { border: 1px solid var(--lime); border-radius: 2px; background: transparent; color: var(--lime); }
+      .moment p { color: #d8ffe5; }
+      .moment em { color: var(--lime); }
+
+      .safe { border-block: 1px solid rgba(0,255,102,.45); background: #020604; }
+      .answer { border: 1px solid #246c3a; border-radius: 2px; background: #06100a; }
+      .answer-icon { border: 1px solid var(--lime); border-radius: 2px; background: transparent; color: var(--lime); box-shadow: 0 0 20px rgba(0,255,102,.14); transform: none; }
+      .answer h3 { color: #effff3; }
+      .answer h3::before { content: "[!] "; color: var(--yellow); }
+      .answer p { color: #8dab96; }
+
+      .final-card { border: 1px solid var(--lime); border-radius: 3px; background: rgba(5,18,9,.94); box-shadow: 12px 12px 0 rgba(0,255,102,.14), 0 0 60px rgba(0,255,102,.1); }
+      .final h2 { color: #f0fff4; }
+      .final p { color: #98bca2; }
+      footer { color: #54725c; }
+
+      @keyframes blink { 50% { opacity: 0; } }
+    </style>
+  </head>
+  <body>
+    <header class="wrap topbar">
+      <a class="logo" href="#top" aria-label="Клавиши — наверх"><span class="logo-mark">К</span>Клавиши</a>
+      <a class="mini-link" href="index.html">Уже готов? Играть →</a>
+    </header>
+
+    <main id="top">
+      <section class="wrap hero" aria-labelledby="hero-title">
+        <div>
+          <p class="eyebrow">Игровой тренажёр клавиатуры</p>
+          <h1 id="hero-title">Печатай быстрее. <span>Успевай больше.</span></h1>
+          <p class="hero-copy">Лови падающие слова, прокачивай скорость и перестань искать буквы глазами. Всего 10 минут — и это уже не скучная тренировка, а игра.</p>
+          <a class="cta" href="index.html">Играть</a>
+        </div>
+
+        <div class="game-card" aria-hidden="true">
+          <div class="falling-word">скорость</div>
+          <div class="speed-line"></div>
+          <div class="keyboard">
+            <div class="key-row"><span class="key">Й</span><span class="key">Ц</span><span class="key hot">У</span><span class="key">К</span><span class="key">Е</span><span class="key">Н</span><span class="key">Г</span><span class="key">Ш</span></div>
+            <div class="key-row"><span class="key">Ф</span><span class="key hot">Ы</span><span class="key">В</span><span class="key">А</span><span class="key hot">П</span><span class="key">Р</span><span class="key">О</span></div>
+            <div class="key-row"><span class="key">Я</span><span class="key">Ч</span><span class="key">С</span><span class="key hot">М</span><span class="key">И</span><span class="key">Т</span></div>
+            <div class="key-row"><span class="key space"></span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="moments-title">
+        <div class="wrap">
+          <div class="section-heading"><h2 id="moments-title">Узнаёшь себя?</h2><span class="section-number">01 / 03</span></div>
+          <div class="moments">
+            <article class="moment"><span class="moment-tag">На уроке</span><p>Знаешь ответ, но пока набираешь — <em>класс уже ушёл дальше.</em></p></article>
+            <article class="moment"><span class="moment-tag">В чате</span><p>Друзья отправили десять сообщений, а ты <em>всё ещё пишешь первое.</em></p></article>
+            <article class="moment"><span class="moment-tag">На информатике</span><p>Задача понятна. Больше времени уходит на клавиши, <em>чем на сам код.</em></p></article>
+            <article class="moment"><span class="moment-tag">Каждый день</span><p>Смотришь на клавиатуру и снова теряешь место <em>в тексте на экране.</em></p></article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section safe" aria-labelledby="safe-title">
+        <div class="wrap">
+          <div class="section-heading"><h2 id="safe-title">Почему не страшно</h2><span class="section-number">02 / 03</span></div>
+          <div class="answers">
+            <article class="answer"><div class="answer-icon">1</div><h3>«Я печатаю слишком медленно»</h3><p>Именно поэтому ты здесь. Начни с лёгкого уровня: темп растёт вместе с тобой, а не убегает вперёд.</p></article>
+            <article class="answer"><div class="answer-icon">↻</div><h3>«Буду ошибаться»</h3><p>Ошибки — часть игры. У тебя есть три жизни и сколько угодно новых попыток. Никаких оценок.</p></article>
+            <article class="answer"><div class="answer-icon">10</div><h3>«У меня нет времени»</h3><p>Не нужен час занятий. Играй по 10 минут три раза в неделю — коротко, понятно и без зубрёжки.</p></article>
+          </div>
+        </div>
+      </section>
+
+      <section class="wrap final" aria-labelledby="final-title">
+        <div class="final-card">
+          <p class="eyebrow">03 / 03 · пора проверить</p>
+          <h2 id="final-title">Сколько слов успеешь поймать ты?</h2>
+          <p>Введи имя, выбери сложность и начинай.</p>
+          <a class="cta" href="index.html">Играть</a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="wrap">Клавиши · тренажёр быстрой печати</footer>
+  </body>
+</html>
